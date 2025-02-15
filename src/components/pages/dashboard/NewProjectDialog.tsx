@@ -26,9 +26,59 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { supabase } from '@/supabaseClient';
+import dayjs from 'dayjs';
 
 const NewProjectDialog = () => {
   const [dueDate, setDueDate] = useState<Date>();
+  const [status, setStatus] = useState<string>('');
+  const [inputs, setInputs] = useState({
+    title: '',
+    // dueDate: '',
+    // status: '',
+    description: '',
+    created_by: 0,
+  });
+
+  const { title, description, created_by } = inputs;
+
+  // const handleCreateProject = (event) => {
+  //   event.preventDefault();
+  //   console.log(event);
+  //   console.log(event.target);
+
+  // const formData = new FormData(event.target);
+  // console.log(formData);
+  // const titleValue = formData.get('title');
+  // console.log(titleValue);
+  // };
+  /* input id 종류::::: title, dueDate, status, description*/
+  // 이 input 의 value 들을 저장 클릭 시, 프로젝트 추가되게 하기. supabase  post기능
+
+  const handleCreateProject = async (e) => {
+    e.preventDefault();
+    const { data } = await supabase.from('project').insert({
+      title,
+      status,
+      description,
+      // due_date: dayjs().format('YYYY-MM-DD'),
+      due_date: dueDate,
+      // members: members, // 나중에는 여기 number 로 바꿔줘야 하나, 테이블 수정하기.
+      created_by: '익명이',
+    });
+    console.log(data);
+  };
+
+  const handleInputChange = (event) => {
+    console.log(event.target.id);
+    console.log(event.target.name);
+    console.log(event.target.value);
+    setInputs({ ...inputs, [event.target.id]: event.target.value });
+  };
+
+  const handleValueChange = (value: string) => {
+    setStatus(value);
+  };
 
   return (
     <Dialog>
@@ -41,12 +91,17 @@ const NewProjectDialog = () => {
         <DialogHeader>
           <DialogTitle>새 프로젝트 생성</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <form className="grid gap-4 py-4" onSubmit={handleCreateProject}>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
+            <Label htmlFor="title" className="text-right">
               프로젝트 이름
             </Label>
-            <Input id="name" className="col-span-3" />
+            <Input
+              id="title"
+              name="title"
+              className="col-span-3"
+              onChange={handleInputChange}
+            />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="dueDate" className="text-right">
@@ -83,11 +138,12 @@ const NewProjectDialog = () => {
             <Label htmlFor="status" className="text-right">
               상태
             </Label>
-            <Select>
+            <Select onValueChange={handleValueChange}>
               <SelectTrigger className="w-[280px]">
                 <SelectValue placeholder="상태 선택" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="not-in-progress">시작전</SelectItem>
                 <SelectItem value="in-progress">진행중</SelectItem>
                 <SelectItem value="completed">완료</SelectItem>
               </SelectContent>
@@ -97,22 +153,39 @@ const NewProjectDialog = () => {
             <Label htmlFor="description" className="text-right">
               설명
             </Label>
-            <Textarea id="description" className="col-span-3" />
+            <Textarea
+              id="description"
+              name="description"
+              onChange={handleInputChange}
+              className="col-span-3"
+            />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="members" className="text-right">
-              멤버 수
+            <Label htmlFor="created_by" className="text-right">
+              멤버 이름
+              {/* 이부분은 멤버 선택해서 추가하는 것으로 바꿔야할듯. */}
+              {/* user 목록 쫙 뿌려주고, 선택하게 하기? 검색도 가능하게 */}
+              {/* 이 프로젝트에 초대 또는 액세스 허용된 사람들의 목록을 쭉 깔아주고, 그 중 선택할 수 있어야할듯. 선택하면, 추가되게하기 */}
             </Label>
-            <Input id="members" type="number" className="col-span-3" />
+            <Input
+              id="created_by"
+              name="created_by"
+              type="text"
+              onChange={handleInputChange}
+              className="col-span-3"
+            />
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
+          {/* <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="createdAt" className="text-right">
               생성일자
             </Label>
             <Input id="createdAt" type="date" className="col-span-3" />
-          </div>
-        </div>
-        <Button type="submit">저장</Button>
+          </div> */}
+          {/* 생성일자는 필요없을듯 알아서 생성되고, 프로젝트에만 표시되면 될듯 함 */}
+          <Button type="submit" onClick={(e) => handleCreateProject(e)}>
+            저장
+          </Button>
+        </form>
       </DialogContent>
     </Dialog>
   );
