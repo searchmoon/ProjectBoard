@@ -2,14 +2,15 @@ import { Menu, Calendar, Users } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import dayjs from 'dayjs';
+import { ProjectType } from '@/pages/Dashboard';
 
-const ProjectCard = ({ project }) => {
+const ProjectCard = ({ project }: { project: ProjectType }) => {
   const projectCreatedDate = dayjs(project.created_at);
   const projectDueDate = dayjs(project.due_date);
 
   const duration = projectDueDate.diff(projectCreatedDate, 'days');
   return (
-    <div className="p-5 border rounded-lg shadow-sm bg-white">
+    <div className="p-5 border rounded-lg shadow-sm bg-white mb-5">
       <div className="flex items-center justify-between">
         <div className="flex-1">
           <h3 className="text-lg leading-6 font-medium text-gray-900">

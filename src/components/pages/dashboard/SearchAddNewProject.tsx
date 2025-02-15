@@ -1,8 +1,17 @@
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import NewProjectDialog from './NewProjectDialog';
+import { supabase } from '@/supabaseClient';
 
 const SearchAddNewProject = () => {
+  const handleSearchProject = async () => {
+    const { data: findData } = await supabase
+      .from('project')
+      .select('*')
+      .like('title', '%프로젝트%');
+    console.log(findData);
+  };
+
   return (
     <div className="flex items-center justify-between mb-6">
       <div className="flex-1 max-w-lg">
@@ -14,6 +23,7 @@ const SearchAddNewProject = () => {
             className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             placeholder="프로젝트 검색..."
             type="text"
+            onChange={handleSearchProject}
           />
         </div>
       </div>
