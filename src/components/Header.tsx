@@ -2,8 +2,20 @@ import { Bell } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 const Header = () => {
+  const headerTabs = [
+    { name: '대시보드', path: '/' },
+    { name: '칸반보드', path: '/kanban' },
+    { name: '프로젝트', path: '/project' },
+  ];
+
+  const [activeTab, setActiveTab] = useState<string>('/');
+
+  const handleTabClick = (path: string) => {
+    setActiveTab(path);
+  };
   return (
     <nav className=" shadow-sm border-b w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -13,24 +25,20 @@ const Header = () => {
               <h1 className="text-xl font-bold text-indigo-600">TaskFlow</h1>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              <Link
-                to="/"
-                className="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-              >
-                대시보드
-              </Link>
-              <Link
-                to="/kanban"
-                className="text-gray-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium"
-              >
-                칸반보드
-              </Link>
-              <Link
-                to="/projects"
-                className="text-gray-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium"
-              >
-                프로젝트
-              </Link>
+              {headerTabs.map((tab) => (
+                <Link
+                  key={tab.path}
+                  to={tab.path}
+                  onClick={() => handleTabClick(tab.path)}
+                  className={`${
+                    activeTab === tab.path
+                      ? 'border-indigo-500 text-gray-900 border-b-2 transform scale-300'
+                      : 'text-gray-500 hover:text-gray-700'
+                  } inline-flex items-center px-1 pt-1 text-sm font-medium transition-all duration-300 ease-in-out`}
+                >
+                  {tab.name}
+                </Link>
+              ))}
             </div>
           </div>
           <div className="flex items-center">

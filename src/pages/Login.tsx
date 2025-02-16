@@ -10,8 +10,9 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@radix-ui/react-select';
-// import NaverIcon from '@/assets/naver.svg?react';
-// import KakaoIcon from '@/assets/kakao.svg?react';
+import NaverIcon from '@/assets/naver.svg?react';
+import KakaoIcon from '@/assets/kakao.svg?react';
+import { Link } from 'react-router-dom';
 
 export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
@@ -65,26 +66,12 @@ export default function LoginScreen() {
               SNS계정으로 간편 로그인/회원가입
             </p>
             <div className="flex justify-center space-x-4">
-              <Button
-                variant="outline"
-                size="icon"
-                asChild
-                className="rounded-full"
-              >
-                <a href={'/users/auto/naver'} className="w-12 h-12">
-                  {/* <NaverIcon /> */}
-                </a>
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                asChild
-                className="rounded-full"
-              >
-                <a href={'/users/auto/kakao'} className="w-12 h-12">
-                  {/* <KakaoIcon /> */}
-                </a>
-              </Button>
+              <Link to={'/users/auto/naver'}>
+                <NaverIcon className="w-8 h-8" />
+              </Link>
+              <Link to={'/users/auto/kakao'}>
+                <KakaoIcon className="w-8 h-8" />
+              </Link>
             </div>
           </div>
         </CardFooter>
