@@ -27,7 +27,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { supabase } from '@/supabaseClient';
-import dayjs from 'dayjs';
+// import dayjs from 'dayjs';
 
 const NewProjectDialog = () => {
   const [dueDate, setDueDate] = useState<Date>();
@@ -40,7 +40,7 @@ const NewProjectDialog = () => {
     created_by: 0,
   });
 
-  const { title, description, created_by } = inputs;
+  const { title, description } = inputs;
 
   // const handleCreateProject = (event) => {
   //   event.preventDefault();
@@ -55,21 +55,23 @@ const NewProjectDialog = () => {
   /* input id 종류::::: title, dueDate, status, description*/
   // 이 input 의 value 들을 저장 클릭 시, 프로젝트 추가되게 하기. supabase  post기능
 
-  const handleCreateProject = async (e) => {
-    e.preventDefault();
-    const { data } = await supabase.from('project').insert({
-      title,
-      status,
-      description,
-      // due_date: dayjs().format('YYYY-MM-DD'),
-      due_date: dueDate,
-      // members: members, // 나중에는 여기 number 로 바꿔줘야 하나, 테이블 수정하기.
-      created_by: '익명이',
-    });
-    console.log(data);
-  };
+  const handleCreateProject = async () =>
+    // e
+    {
+      // e.preventDefault();
+      const { data } = await supabase.from('project').insert({
+        title,
+        status,
+        description,
+        // due_date: dayjs().format('YYYY-MM-DD'),
+        due_date: dueDate,
+        // members: members, // 나중에는 여기 number 로 바꿔줘야 하나, 테이블 수정하기.
+        created_by: '익명이',
+      });
+      console.log(data);
+    };
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.id);
     console.log(event.target.name);
     console.log(event.target.value);
