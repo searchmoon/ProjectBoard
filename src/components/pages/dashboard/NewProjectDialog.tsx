@@ -71,10 +71,12 @@ const NewProjectDialog = () => {
       console.log(data);
     };
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.id);
-    console.log(event.target.name);
-    console.log(event.target.value);
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    // console.log(event.target.id);
+    // console.log(event.target.name);
+    // console.log(event.target.value);
     setInputs({ ...inputs, [event.target.id]: event.target.value });
   };
 
@@ -184,7 +186,7 @@ const NewProjectDialog = () => {
             <Input id="createdAt" type="date" className="col-span-3" />
           </div> */}
           {/* 생성일자는 필요없을듯 알아서 생성되고, 프로젝트에만 표시되면 될듯 함 */}
-          <Button type="submit" onClick={(e) => handleCreateProject(e)}>
+          <Button type="submit" onClick={handleCreateProject}>
             저장
           </Button>
         </form>
