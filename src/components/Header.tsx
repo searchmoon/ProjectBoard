@@ -2,7 +2,8 @@ import { Bell } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/supabaseClient';
 
 const Header = () => {
   const headerTabs = [
@@ -16,6 +17,25 @@ const Header = () => {
   const handleTabClick = (path: string) => {
     setActiveTab(path);
   };
+  const [userInfo, setUserInfo] = useState();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUserInfo(user);
+    };
+
+    fetchUser();
+  }, []);
+  const handleLogout = () => {
+    if (confirm('로그아웃 하시겠습니까?')) {
+      supabase.auth.signOut();
+      location.reload();
+    }
+  };
+
   return (
     <nav className=" shadow-sm border-b w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -50,12 +70,28 @@ const Header = () => {
               <Bell className="h-5 w-5" />
             </Button>
             <div className="ml-3 relative">
-              <Link to="/login">
-                <Avatar>
-                  <AvatarImage src="/api/placeholder/32/32" alt="User avatar" />
-                  <AvatarFallback>U</AvatarFallback>
-                </Avatar>
-              </Link>
+              {userInfo ? (
+                <div className="flex gap-4">
+                  <button onClick={handleLogout}>logout</button>
+                  <Avatar>
+                    <AvatarImage
+                      src={userInfo?.user_metadata?.avatar_url}
+                      alt="User avatar"
+                    />
+                    <AvatarFallback>U</AvatarFallback>
+                  </Avatar>
+                </div>
+              ) : (
+                <Link to="/login">
+                  <Avatar>
+                    <AvatarImage
+                      src="/api/placeholder/32/32"
+                      alt="User avatar"
+                    />
+                    <AvatarFallback>U</AvatarFallback>
+                  </Avatar>
+                </Link>
+              )}
             </div>
           </div>
         </div>
