@@ -17,7 +17,7 @@ const Header = () => {
   const handleTabClick = (path: string) => {
     setActiveTab(path);
   };
-  const [userInfo, setUserInfo] = useState();
+  const [userInfo, setUserInfo] = useState<null | Record<string, any>>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -29,9 +29,11 @@ const Header = () => {
 
     fetchUser();
   }, []);
+
   const handleLogout = () => {
     if (confirm('로그아웃 하시겠습니까?')) {
       supabase.auth.signOut();
+      setUserInfo(null);
       location.reload();
     }
   };

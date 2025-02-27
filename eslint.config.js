@@ -1,14 +1,14 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import tseslint from 'typescript-eslint'
+import js from '@eslint/js';
+import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   { ignores: ['dist'] },
   {
     extends: [
-      js.configs.recommended, 
+      js.configs.recommended,
       ...tseslint.configs.recommended,
       'plugin:react/recommended', // React 추천 규칙 추가
       'prettier', // Prettier와 충돌하는 규칙 비활성화
@@ -21,7 +21,7 @@ export default tseslint.config(
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
-      prettier
+      prettier,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
@@ -30,7 +30,7 @@ export default tseslint.config(
         { allowConstantExport: true },
       ],
       'prettier/prettier': 'warn', // Prettier 포맷 규칙 추가
-      '@typescript-eslint/no-unused-vars': ['error'], // 타입스크립트 unused-vars 에러
+      '@typescript-eslint/no-unused-vars': ['warn'], // 타입스크립트 unused-vars 경고표시
     },
   },
-)
+);

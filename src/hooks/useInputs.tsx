@@ -11,10 +11,14 @@ export default function useInputs<T extends Record<string, string>>(
   const [values, setValues] = useState<T>(initialValues);
 
   const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
-    setValues({
-      ...values,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    if (name in values) {
+      setValues((prevValues) => ({
+        ...prevValues,
+        [name]: value,
+      }));
+    }
   };
 
   return { values, onChangeValue };

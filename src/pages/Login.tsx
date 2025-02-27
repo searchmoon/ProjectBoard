@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,11 +14,16 @@ import GoogleIcon from '@/assets/google.svg?react';
 import KakaoIcon from '@/assets/kakao.svg?react';
 import { supabase } from '@/supabaseClient';
 import { Link } from 'react-router-dom';
+import useInputs from '@/hooks/useInputs';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  const { values, onChangeValue } = useInputs({
+    email: '',
+    password: '',
+  });
 
   async function signInWithKakao() {
     const { data: loginInfo, error } = await supabase.auth.signInWithOAuth({
@@ -31,7 +36,7 @@ export default function Login() {
     }
   }
 
-  async function signInWithGoogle(e) {
+  async function signInWithGoogle(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -41,11 +46,12 @@ export default function Login() {
     } = await supabase.auth.getUser();
     console.log(user);
   }
+
   const handleSignin = async () => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: 'moon@moon.net',
-        password: '121212',
+        email: values.email,
+        password: values.password,
       });
       if (error) throw error;
       const { user, session } = data;
@@ -55,7 +61,12 @@ export default function Login() {
       // window.location.href = '/';
     } catch (error) {
       console.error(error);
-      alert(`회원가입이 완료되지 않았습니다: ${error?.message}`);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      alert(
+        `로그인에 실패했습니다. ${errorMessage.includes('Email not confirmed') ? '가입한 이메일의 메일함에서 가입 확인을 완료해주세요.' : errorMessage}`,
+      );
     }
   };
 
@@ -71,12 +82,21 @@ export default function Login() {
           <form>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Input id="username" placeholder="아이디" />
+                <Input
+                  id="email"
+                  name="email"
+                  value={values.email}
+                  onChange={onChangeValue}
+                  placeholder="이메일"
+                />
               </div>
               <div className="space-y-2">
                 <div className="relative">
                   <Input
                     id="password"
+                    name="password"
+                    value={values.password}
+                    onChange={onChangeValue}
                     type={showPassword ? 'text' : 'password'}
                     placeholder="비밀번호"
                   />

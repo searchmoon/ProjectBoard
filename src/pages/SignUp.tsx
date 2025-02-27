@@ -13,6 +13,9 @@ import {
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/supabaseClient';
 import useInputs from '../hooks/useInputs';
+interface ErrorWithMessage {
+  message?: string;
+}
 
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
@@ -34,19 +37,22 @@ export default function SignUp() {
 
   const handleSubmitSignup = async () => {
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email: email,
         password: password,
       });
 
       if (error) throw error;
-
-      alert('회원가입이 완료되었습니다');
+      alert(
+        '회원가입이 완료되었습니다. 가입한 이메일에서 가입 확인 버튼을 눌러주셔야 로그인이 가능합니다.',
+      );
       window.history.back();
       // window.location.href = '/login';
     } catch (error) {
       console.error(error);
-      alert(`회원가입이 완료되지 않았습니다: ${error?.message}`);
+      alert(
+        `회원가입이 완료되지 않았습니다: ${(error as ErrorWithMessage)?.message}`,
+      );
     }
   };
 
