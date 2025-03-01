@@ -28,55 +28,35 @@ import {
 } from '@/components/ui/popover';
 import { supabase } from '@/supabaseClient';
 // import dayjs from 'dayjs';
+interface ProjectDialogProp {
+  action: 'create' | 'detail' | 'update';
+}
 
-const NewProjectDialog = () => {
+const NewProjectDialog = ({ action = 'create' }: ProjectDialogProp) => {
   const [dueDate, setDueDate] = useState<Date>();
   const [status, setStatus] = useState<string>('');
   const [inputs, setInputs] = useState({
     title: '',
-    // dueDate: '',
-    // status: '',
     description: '',
     created_by: 0,
   });
 
   const { title, description } = inputs;
 
-  // const handleCreateProject = (event) => {
-  //   event.preventDefault();
-  //   console.log(event);
-  //   console.log(event.target);
-
-  // const formData = new FormData(event.target);
-  // console.log(formData);
-  // const titleValue = formData.get('title');
-  // console.log(titleValue);
-  // };
-  /* input id 종류::::: title, dueDate, status, description*/
-  // 이 input 의 value 들을 저장 클릭 시, 프로젝트 추가되게 하기. supabase  post기능
-
-  const handleCreateProject = async () =>
-    // e
-    {
-      // e.preventDefault();
-      const { data } = await supabase.from('project').insert({
-        title,
-        status,
-        description,
-        // due_date: dayjs().format('YYYY-MM-DD'),
-        due_date: dueDate,
-        // members: members, // 나중에는 여기 number 로 바꿔줘야 하나, 테이블 수정하기.
-        created_by: '익명이',
-      });
-      console.log(data);
-    };
+  const handleCreateProject = async () => {
+    const { data } = await supabase.from('project').insert({
+      title,
+      status,
+      description,
+      due_date: dueDate,
+      created_by: '익명이',
+    });
+    console.log(data);
+  };
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    // console.log(event.target.id);
-    // console.log(event.target.name);
-    // console.log(event.target.value);
     setInputs({ ...inputs, [event.target.id]: event.target.value });
   };
 
@@ -100,12 +80,17 @@ const NewProjectDialog = () => {
             <Label htmlFor="title" className="text-right">
               프로젝트 이름
             </Label>
-            <Input
-              id="title"
-              name="title"
-              className="col-span-3"
-              onChange={handleInputChange}
-            />
+            {action === 'detail' ? (
+              <p>{title}dddd </p>
+            ) : (
+              <Input
+                id="title"
+                name="title"
+                value={title}
+                className="col-span-3"
+                onChange={handleInputChange}
+              />
+            )}
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="dueDate" className="text-right">
@@ -134,6 +119,7 @@ const NewProjectDialog = () => {
                   selected={dueDate}
                   onSelect={setDueDate}
                   initialFocus
+                  disabled={action === 'detail' ? true : false}
                 />
               </PopoverContent>
             </Popover>

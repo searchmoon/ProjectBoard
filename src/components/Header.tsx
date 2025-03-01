@@ -30,9 +30,9 @@ const Header = () => {
     fetchUser();
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (confirm('로그아웃 하시겠습니까?')) {
-      supabase.auth.signOut();
+      await supabase.auth.signOut();
       setUserInfo(null);
       location.reload();
     }

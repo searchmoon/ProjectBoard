@@ -1,4 +1,4 @@
-import AddNewProject from '@/components/pages/dashboard/SearchAddNewProject';
+import SearchAddNewProject from '@/components/pages/dashboard/SearchAddNewProject';
 import ProjectCard from '@/components/pages/dashboard/ProjectCard';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/supabaseClient';
@@ -18,7 +18,9 @@ export interface ProjectType {
 }
 
 const Dashboard = () => {
-  const [projects, setProjects] = useState<ProjectType[]>([]);
+  const [projects, setProjects] = useState<ProjectType[] | null>([]);
+  const [showProjectList, setShowProjectList] = useState(true);
+  const [selectProject, setSelectProject] = useState<ProjectType | undefined>();
 
   useEffect(() => {
     getProjects();
@@ -33,19 +35,13 @@ const Dashboard = () => {
     }
   }
 
-  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(
-    null,
-  );
-  const [showProjectList, setShowProjectList] = useState(true);
-
   const handleProjectSelect = (id: number) => {
-    setSelectedProjectId(id);
+    setSelectProject(projects?.find((item) => item.id === id));
     setShowProjectList(false);
   };
 
   const handleToggleSidebar = () => {
     setShowProjectList(true);
-    setSelectedProjectId(null);
   };
 
   return (
@@ -60,7 +56,7 @@ const Dashboard = () => {
             transition={{ type: 'tween', duration: 0.3 }}
             className="mx-4 mt-6 h-full"
           >
-            <AddNewProject />
+            <SearchAddNewProject setProjects={setProjects} />
             {projects?.map((project) => (
               <ProjectCard
                 onClick={() => handleProjectSelect(project.id)}
@@ -80,7 +76,7 @@ const Dashboard = () => {
               className="flex h-full"
             >
               <Sidebar onToggle={handleToggleSidebar}></Sidebar>
-              <ProjectDetail projectId={selectedProjectId}></ProjectDetail>
+              <ProjectDetail selectProject={selectProject}></ProjectDetail>
             </motion.div>
           </div>
         )}
