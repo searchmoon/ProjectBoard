@@ -1,10 +1,12 @@
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import NewProjectDialog from './NewProjectDialog';
+import ProjectDialog from './ProjectDialog';
 import { supabase } from '@/supabaseClient';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import useDebounce from '../../../hooks/useDebounce';
 import { ProjectType } from '@/pages/Dashboard';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 
 interface SearchAddNewProjectProp {
   setProjects: Dispatch<SetStateAction<ProjectType[] | null>>;
@@ -17,6 +19,7 @@ const SearchAddNewProject = ({ setProjects }: SearchAddNewProjectProp) => {
   const handleSearchProject = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
   };
+
   useEffect(() => {
     const fetchProjects = async () => {
       if (debounceValue) {
@@ -30,6 +33,11 @@ const SearchAddNewProject = ({ setProjects }: SearchAddNewProjectProp) => {
 
     fetchProjects();
   }, [debounceValue]);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const handleDialogOpen = () => {
+    setIsDialogOpen((prev) => !prev);
+  };
 
   return (
     <div className="flex items-center justify-between mb-6">
@@ -48,7 +56,18 @@ const SearchAddNewProject = ({ setProjects }: SearchAddNewProjectProp) => {
         </div>
       </div>
       <div className="ml-3">
-        <NewProjectDialog action="create" />
+        {/* <ProjectDialog action="create"> */}
+        <Button
+          onClick={handleDialogOpen}
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+        >
+          <Plus className="h-5 w-5 mr-2" />새 프로젝트
+        </Button>
+        <ProjectDialog
+          isOpen={isDialogOpen}
+          setIsOpen={setIsDialogOpen}
+          action="create"
+        />
       </div>
     </div>
   );
