@@ -2,12 +2,11 @@ import SearchAddNewProject from '@/components/pages/dashboard/SearchAddNewProjec
 import ProjectCard from '@/components/pages/dashboard/ProjectCard';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/supabaseClient';
-import Sidebar from '@/components/SideBar';
-import ProjectDetail from '@/components/pages/dashboard/ProjectDetail';
-import { AnimatePresence } from 'framer-motion';
-import { motion } from 'framer-motion';
-import ProjectDialog from '@/components/pages/dashboard/ProjectDialog';
-import { DialogTrigger } from '@/components/ui/dialog';
+import { DefaultDialog } from '../components/common/DefaultDialog';
+import useDialog from '@/hooks/useDialog';
+import ModalProjectDetail from '@/components/common/modalContent/ModalProjectDetail';
+import { SquarePen } from 'lucide-react';
+import ModalProjectUpdate from '@/components/common/modalContent/ModalProjectUpdate';
 
 export interface ProjectType {
   created_at: string;
@@ -15,15 +14,18 @@ export interface ProjectType {
   description?: string;
   due_date: string;
   id: number;
-  status: string;
+  status: 'not-in-progress' | 'in-progress' | 'completed';
   title: string;
 }
+type ActionType = 'update' | 'create' | 'detail';
 
 const Dashboard = () => {
   const [projects, setProjects] = useState<ProjectType[] | null>([]);
-  const [showProjectList, setShowProjectList] = useState(true);
-  const [selectProject, setSelectProject] = useState<ProjectType | undefined>();
-  // const [isOpenProjectDialog, setIsOpenProjectDialog] = useState(false);
+  const [action, setAction] = useState<ActionType>('detail');
+  const [selectedProject, setSelectedProject] = useState<
+    ProjectType | undefined
+  >();
+  const { isOpen, handleToggleDialog } = useDialog();
 
   useEffect(() => {
     getProjects();
@@ -38,36 +40,18 @@ const Dashboard = () => {
     }
   }
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const handleDialogOpen = () => {
-    setIsDialogOpen((prev) => !prev);
-  };
-
   const handleProjectSelect = (id: number) => {
-    setSelectProject(projects?.find((item) => item.id === id));
-    // setShowProjectList(false);
-    // console.log(isOpenProjectDialog);
-    // setIsOpenProjectDialog((prev) => !prev);
-    handleDialogOpen();
+    setSelectedProject(projects?.find((item) => item.id === id));
+    setAction('detail');
+    handleToggleDialog();
   };
 
-  const handleToggleSidebar = () => {
-    setShowProjectList(true);
+  const handleChangeAction = (action: ActionType) => {
+    setAction(action);
   };
 
   return (
     <div className="flex-1 h-screen">
-      {/* <AnimatePresence initial={false}> */}
-      {/* {showProjectList ? (
-          <motion.div
-            key="project-list"
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '-100%' }}
-            transition={{ type: 'tween', duration: 0.3 }}
-            className="mx-4 mt-6 h-full"
-          > */}
-
       <SearchAddNewProject setProjects={setProjects} />
 
       {projects?.map((project) => (
@@ -77,30 +61,33 @@ const Dashboard = () => {
           project={project}
         />
       ))}
-      <ProjectDialog
-        key={isDialogOpen ? 'open' : 'closed'} // key 를 사용해서, 열릴때와 닫힐때 key 값을 변경하므로써, 새로운 인스턴스로 인식하게 하고, 기존 컴포넌트 재사용을 막는다.
-        action="detail"
-        isOpen={isDialogOpen}
-        setIsOpen={handleDialogOpen}
-        selectProject={selectProject}
-      />
-      {/* </motion.div>
-        ) : (
-          <div className="flex-1 h-full overflow-hidden">
-            <motion.div
-              key="project-detail"
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'tween', duration: 0.3 }}
-              className="flex h-full"
-            >
-              <Sidebar onToggle={handleToggleSidebar}></Sidebar>
-              <ProjectDetail selectProject={selectProject}></ProjectDetail>
-            </motion.div>
-          </div>
-        )} */}
-      {/* </AnimatePresence> */}
+      {action === 'detail' ? (
+        <DefaultDialog
+          open={isOpen}
+          onOpenChange={handleToggleDialog}
+          title="프로젝트 상세"
+          description={
+            <SquarePen
+              className="w-4 h-4"
+              onClick={() => handleChangeAction('update')}
+            />
+          }
+          content={<ModalProjectDetail selectedProject={selectedProject} />}
+        />
+      ) : (
+        <DefaultDialog
+          // key={isOpen ? 'open' : 'closed'} // key 를 사용해서, 열릴때와 닫힐때 key 값을 변경하므로써, 새로운 인스턴스로 인식하게 하고, 기존 컴포넌트 재사용을 막는다.
+          open={isOpen}
+          onOpenChange={handleToggleDialog}
+          title="프로젝트 수정"
+          content={
+            <ModalProjectUpdate
+              action="update"
+              selectedProject={selectedProject}
+            />
+          }
+        />
+      )}
     </div>
   );
 };
