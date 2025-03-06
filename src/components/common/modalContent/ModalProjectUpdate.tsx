@@ -24,10 +24,12 @@ import { ProjectType } from '@/pages/Dashboard';
 interface ModalProjectUpdateProps {
   action?: 'update' | 'create' | 'detail';
   selectedProject?: ProjectType;
+  onSubmit?: () => void;
 }
 
 export default function ModalProjectUpdate({
   selectedProject,
+  onSubmit,
 }: ModalProjectUpdateProps) {
   const [projectData, setProjectData] = useState({
     id: selectedProject?.id || '',
@@ -52,8 +54,13 @@ export default function ModalProjectUpdate({
     setProjectData((prev) => ({ ...prev, due_date: date }));
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit?.(projectData);
+  };
+
   return (
-    <>
+    <form onSubmit={handleSubmit}>
       <div className="grid grid-cols-4 items-center gap-4">
         <Label htmlFor="title" className="text-right">
           프로젝트 이름
@@ -70,6 +77,7 @@ export default function ModalProjectUpdate({
         <Label htmlFor="due_date" className="text-right">
           마감일자
         </Label>
+
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -143,6 +151,9 @@ export default function ModalProjectUpdate({
           className="col-span-3"
         />
       </div>
-    </>
+      <button type="submit" style={{ display: 'none' }} id="submit-project">
+        제출
+      </button>
+    </form>
   );
 }

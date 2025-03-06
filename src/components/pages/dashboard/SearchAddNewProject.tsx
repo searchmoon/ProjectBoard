@@ -24,19 +24,21 @@ const SearchAddNewProject = ({ setProjects }: SearchAddNewProjectProp) => {
 
   useEffect(() => {
     const fetchProjects = async () => {
-      if (debounceValue) {
-        const { data: filteredData } = await supabase
-          .from('project')
-          .select('*')
-          .like('title', `%${debounceValue}%`);
-        setProjects(filteredData);
-      }
+      const { data } = await supabase
+        .from('project')
+        .select('*')
+        .like('title', `%${debounceValue}%`);
+      setProjects(data);
     };
 
     fetchProjects();
   }, [debounceValue]);
 
   const { isOpen, handleToggleDialog } = useDialog();
+
+  const handleCreateProject = (projectData) => {
+    console.log(projectData);
+  };
 
   return (
     <div className="flex items-center justify-between mb-6">
@@ -65,7 +67,24 @@ const SearchAddNewProject = ({ setProjects }: SearchAddNewProjectProp) => {
           open={isOpen}
           onOpenChange={handleToggleDialog}
           title="프로젝트 생성"
-          content={<ModalProjectUpdate />}
+          content={
+            <ModalProjectUpdate
+              action="create"
+              onSubmit={handleCreateProject}
+            />
+          }
+          buttons={
+            <>
+              <button>취소</button>
+              <button
+                onClick={() =>
+                  document.getElementById('submit-project')?.click()
+                }
+              >
+                생성
+              </button>
+            </>
+          }
         />
       </div>
     </div>
