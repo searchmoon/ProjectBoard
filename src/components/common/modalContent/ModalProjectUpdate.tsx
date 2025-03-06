@@ -27,10 +27,10 @@ interface ModalProjectUpdateProps {
 }
 
 export default function ModalProjectUpdate({
-  action,
   selectedProject,
 }: ModalProjectUpdateProps) {
   const [projectData, setProjectData] = useState({
+    id: selectedProject?.id || '',
     title: selectedProject?.title || '',
     description: selectedProject?.description || '',
     created_by: selectedProject?.created_by || '',

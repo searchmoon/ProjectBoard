@@ -50,6 +50,10 @@ const Dashboard = () => {
     setAction(action);
   };
 
+  const handleProjectUpdate = (id: number | undefined) => {
+    console.log(id);
+  };
+
   return (
     <div className="flex-1 h-screen">
       <SearchAddNewProject setProjects={setProjects} />
@@ -66,13 +70,14 @@ const Dashboard = () => {
           open={isOpen}
           onOpenChange={handleToggleDialog}
           title="프로젝트 상세"
-          description={
+          icon={
             <SquarePen
-              className="w-4 h-4"
+              className="w-4 h-4 ml-2 cursor-pointer text-zinc-500"
               onClick={() => handleChangeAction('update')}
             />
           }
           content={<ModalProjectDetail selectedProject={selectedProject} />}
+          buttons={<button onClick={handleToggleDialog}>확인</button>}
         />
       ) : (
         <DefaultDialog
@@ -85,6 +90,14 @@ const Dashboard = () => {
               action="update"
               selectedProject={selectedProject}
             />
+          }
+          buttons={
+            <>
+              <button>취소</button>
+              <button onClick={() => handleProjectUpdate(selectedProject?.id)}>
+                저장
+              </button>
+            </>
           }
         />
       )}
