@@ -19,17 +19,17 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
-import { ProjectType } from '@/pages/Dashboard';
+import { ProjectType, Status } from '@/pages/Dashboard';
 
 interface ModalProjectUpdateProps {
   action?: 'update' | 'create' | 'detail';
   selectedProject?: ProjectType;
-  onSubmit?: () => void;
+  handleSubmit?: (projectData: ProjectType) => void;
 }
 
 export default function ModalProjectUpdate({
   selectedProject,
-  onSubmit,
+  handleSubmit,
 }: ModalProjectUpdateProps) {
   const [projectData, setProjectData] = useState({
     id: selectedProject?.id || '',
@@ -37,7 +37,7 @@ export default function ModalProjectUpdate({
     description: selectedProject?.description || '',
     created_by: selectedProject?.created_by || '',
     due_date: selectedProject?.due_date || '',
-    status: selectedProject?.status || '',
+    status: selectedProject?.status || 'not-in-progress',
   });
 
   const handleChange = (
@@ -47,20 +47,26 @@ export default function ModalProjectUpdate({
   };
 
   const handleStatusChange = (value: string) => {
-    setProjectData((prev) => ({ ...prev, status: value }));
+    setProjectData((prev) => ({ ...prev, status: value as Status }));
   };
 
   const handleDateChange = (date: string) => {
     setProjectData((prev) => ({ ...prev, due_date: date }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit?.(projectData);
-  };
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   onSubmit?.(projectData);
+  // };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit?.(projectData);
+      }}
+      className="flex flex-col space-y-2"
+    >
       <div className="grid grid-cols-4 items-center gap-4">
         <Label htmlFor="title" className="text-right">
           프로젝트 이름

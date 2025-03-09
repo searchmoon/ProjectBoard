@@ -33,18 +33,26 @@ export default function Login() {
       console.error(error);
     }
     if (loginInfo) {
+      console.log(loginInfo);
     }
   }
 
   async function signInWithGoogle(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    supabase.auth.signInWithOAuth({
+
+    await supabase.auth.signInWithOAuth({
       provider: 'google',
     });
+
     const {
       data: { user },
+      error,
     } = await supabase.auth.getUser();
     console.log(user);
+
+    if (error) {
+      console.log(error);
+    }
   }
 
   const handleSignin = async () => {

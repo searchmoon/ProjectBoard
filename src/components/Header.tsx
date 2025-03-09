@@ -28,6 +28,21 @@ const Header = () => {
     };
 
     fetchUser();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          console.log('User signed in:', session.user);
+          setUserInfo(session.user);
+        } else if (event === 'SIGNED_OUT') {
+          console.log('User signed out');
+          setUserInfo(null);
+        }
+      },
+    );
+    return () => {
+      authListener.subscription.unsubscribe(); // cleanup 함수. 메모리 누수 방지
+    };
   }, []);
 
   const handleLogout = async () => {

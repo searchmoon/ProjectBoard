@@ -8,13 +8,14 @@ import ModalProjectDetail from '@/components/common/modalContent/ModalProjectDet
 import { SquarePen } from 'lucide-react';
 import ModalProjectUpdate from '@/components/common/modalContent/ModalProjectUpdate';
 
+export type Status = 'not-in-progress' | 'in-progress' | 'completed';
 export interface ProjectType {
-  created_at: string;
+  created_at?: string;
   created_by?: string;
   description?: string;
   due_date: string;
-  id: number;
-  status: 'not-in-progress' | 'in-progress' | 'completed';
+  id?: number | string | undefined;
+  status: Status;
   title: string;
 }
 type ActionType = 'update' | 'create' | 'detail';
@@ -35,6 +36,7 @@ const Dashboard = () => {
     const { data } = await supabase.from('project').select();
     if (data) {
       setProjects(data as ProjectType[]);
+      console.log(data);
     } else {
       setProjects([]);
     }
@@ -50,8 +52,21 @@ const Dashboard = () => {
     setAction(action);
   };
 
-  const handleProjectUpdate = (id: number | undefined) => {
-    console.log(id);
+  const handleUpdateProject = async (projectData: ProjectType) => {
+    const { error, data } = await supabase
+      .from('project')
+      .update({ ...projectData })
+      .eq('id', projectData.id)
+      .select();
+    console.log(data);
+    if (error) {
+      console.error(error);
+    }
+  };
+
+  const handleUpdate = (e) => {
+    document.getElementById('submit-project')?.click();
+    handleToggleDialog();
   };
 
   return (
@@ -60,7 +75,7 @@ const Dashboard = () => {
 
       {projects?.map((project) => (
         <ProjectCard
-          onClick={() => handleProjectSelect(project.id)}
+          onClick={() => handleProjectSelect(project.id as number)}
           key={project.id}
           project={project}
         />
@@ -88,15 +103,14 @@ const Dashboard = () => {
           content={
             <ModalProjectUpdate
               action="update"
+              handleSubmit={handleUpdateProject}
               selectedProject={selectedProject}
             />
           }
           buttons={
             <>
               <button>취소</button>
-              <button onClick={() => handleProjectUpdate(selectedProject?.id)}>
-                저장
-              </button>
+              <button onClick={handleUpdate}>저장</button>
             </>
           }
         />
