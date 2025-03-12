@@ -37,7 +37,10 @@ const SearchAddNewProject = ({ setProjects }: SearchAddNewProjectProp) => {
   const { isOpen, handleToggleDialog } = useDialog();
 
   const handleCreateProject = async (projectData: ProjectType) => {
-    const { error } = await supabase.from('project').insert(projectData);
+    const { id, ...projectDataWithoutId } = projectData;
+    const { error } = await supabase
+      .from('project')
+      .insert(projectDataWithoutId);
     if (error) {
       console.error(error);
     }
@@ -74,19 +77,8 @@ const SearchAddNewProject = ({ setProjects }: SearchAddNewProjectProp) => {
             <ModalProjectUpdate
               action="create"
               handleSubmit={handleCreateProject}
+              handleCancel={handleToggleDialog}
             />
-          }
-          buttons={
-            <>
-              <button>취소</button>
-              <button
-                onClick={() =>
-                  document.getElementById('submit-project')?.click()
-                }
-              >
-                생성
-              </button>
-            </>
           }
         />
       </div>

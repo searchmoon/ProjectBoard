@@ -3,8 +3,10 @@ import { ProjectType } from '@/pages/Dashboard';
 
 export default function ModalProjectDetail({
   selectedProject,
+  handleToggle,
 }: {
   selectedProject: ProjectType | undefined;
+  handleToggle: () => void;
 }) {
   const modalGridStyle = 'grid grid-cols-4 items-center gap-4';
 
@@ -40,6 +42,7 @@ export default function ModalProjectDetail({
         </Label>
         <p className="col-span-3">{selectedProject?.created_by}</p>
       </div>
+      <button onClick={handleToggle}>확인</button>
     </div>
   );
 }

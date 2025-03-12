@@ -25,11 +25,13 @@ interface ModalProjectUpdateProps {
   action?: 'update' | 'create' | 'detail';
   selectedProject?: ProjectType;
   handleSubmit?: (projectData: ProjectType) => void;
+  handleCancel: () => void;
 }
 
 export default function ModalProjectUpdate({
   selectedProject,
   handleSubmit,
+  handleCancel,
 }: ModalProjectUpdateProps) {
   const [projectData, setProjectData] = useState({
     id: selectedProject?.id || '',
@@ -53,11 +55,6 @@ export default function ModalProjectUpdate({
   const handleDateChange = (date: string) => {
     setProjectData((prev) => ({ ...prev, due_date: date }));
   };
-
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   onSubmit?.(projectData);
-  // };
 
   return (
     <form
@@ -157,9 +154,14 @@ export default function ModalProjectUpdate({
           className="col-span-3"
         />
       </div>
-      <button type="submit" style={{ display: 'none' }} id="submit-project">
-        제출
-      </button>
+      <div className="flex justify-end mt-4">
+        <button type="button" onClick={handleCancel} className="mr-2">
+          취소
+        </button>
+        <button type="button" onClick={() => handleSubmit?.(projectData)}>
+          저장
+        </button>
+      </div>
     </form>
   );
 }

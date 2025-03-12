@@ -62,10 +62,6 @@ const Dashboard = () => {
     if (error) {
       console.error(error);
     }
-  };
-
-  const handleUpdate = (e) => {
-    document.getElementById('submit-project')?.click();
     handleToggleDialog();
   };
 
@@ -91,8 +87,12 @@ const Dashboard = () => {
               onClick={() => handleChangeAction('update')}
             />
           }
-          content={<ModalProjectDetail selectedProject={selectedProject} />}
-          buttons={<button onClick={handleToggleDialog}>확인</button>}
+          content={
+            <ModalProjectDetail
+              selectedProject={selectedProject}
+              handleToggle={handleToggleDialog}
+            />
+          }
         />
       ) : (
         <DefaultDialog
@@ -105,13 +105,8 @@ const Dashboard = () => {
               action="update"
               handleSubmit={handleUpdateProject}
               selectedProject={selectedProject}
+              handleCancel={handleToggleDialog} // 추가된 prop
             />
-          }
-          buttons={
-            <>
-              <button>취소</button>
-              <button onClick={handleUpdate}>저장</button>
-            </>
           }
         />
       )}

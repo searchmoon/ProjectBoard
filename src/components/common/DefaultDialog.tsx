@@ -2,7 +2,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -14,7 +13,6 @@ interface DefaultDialogProp {
   title?: string;
   description?: string | React.ReactNode;
   content?: React.ReactNode;
-  buttons?: React.ReactElement;
   icon?: React.ReactElement;
 }
 
@@ -24,7 +22,6 @@ export function DefaultDialog({
   title,
   description,
   content,
-  buttons,
   icon,
 }: DefaultDialogProp) {
   return (
@@ -38,7 +35,6 @@ export function DefaultDialog({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         {content}
-        <DialogFooter className="flex">{buttons}</DialogFooter>
       </DialogContent>
     </Dialog>
   );
