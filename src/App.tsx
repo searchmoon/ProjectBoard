@@ -6,7 +6,7 @@ import Login from './pages/Login';
 import KanbanBoard from './pages/KanbanBoard';
 import SignUp from './pages/SignUp';
 import { ErrorBoundary } from 'react-error-boundary';
-import { ErrorFallback } from './components/ErrorFallback';
+import { ErrorFallback } from './components/common/ErrorFallback';
 
 function App() {
   return (

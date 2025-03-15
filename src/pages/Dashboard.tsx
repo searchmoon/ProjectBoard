@@ -7,6 +7,7 @@ import useDialog from '@/hooks/useDialog';
 import ModalProjectDetail from '@/components/common/modalContent/ModalProjectDetail';
 import { SquarePen } from 'lucide-react';
 import ModalProjectUpdate from '@/components/common/modalContent/ModalProjectUpdate';
+import { useProjectStore } from '@/store/useProjectStore';
 
 export type Status = 'not-in-progress' | 'in-progress' | 'completed';
 export interface ProjectType {
@@ -21,11 +22,11 @@ export interface ProjectType {
 type ActionType = 'update' | 'create' | 'detail';
 
 const Dashboard = () => {
-  const [projects, setProjects] = useState<ProjectType[] | null>([]);
   const [action, setAction] = useState<ActionType>('detail');
   const [selectedProject, setSelectedProject] = useState<
     ProjectType | undefined
   >();
+  const { projects, setProjects, setOriginalProjects } = useProjectStore();
   const { isOpen, handleToggleDialog } = useDialog();
 
   useEffect(() => {
@@ -36,10 +37,13 @@ const Dashboard = () => {
     const { data } = await supabase.from('project').select();
     if (data) {
       setProjects(data as ProjectType[]);
+      setOriginalProjects(data as ProjectType[]);
       console.log(data);
-    } else {
-      setProjects([]);
     }
+    // else {
+    //   setProjects([]);
+    //   setOriginalProjects([]);
+    // }
   }
 
   const handleProjectSelect = (id: number) => {
@@ -67,8 +71,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex-1 h-screen">
-      <SearchAddNewProject setProjects={setProjects} />
-
+      <SearchAddNewProject />
       {projects?.map((project) => (
         <ProjectCard
           onClick={() => handleProjectSelect(project.id as number)}
@@ -76,6 +79,7 @@ const Dashboard = () => {
           project={project}
         />
       ))}
+      {projects.length === 0 && <p>프로젝트가 없습니다.</p>}
       {action === 'detail' ? (
         <DefaultDialog
           open={isOpen}
@@ -96,7 +100,6 @@ const Dashboard = () => {
         />
       ) : (
         <DefaultDialog
-          // key={isOpen ? 'open' : 'closed'} // key 를 사용해서, 열릴때와 닫힐때 key 값을 변경하므로써, 새로운 인스턴스로 인식하게 하고, 기존 컴포넌트 재사용을 막는다.
           open={isOpen}
           onOpenChange={handleToggleDialog}
           title="프로젝트 수정"

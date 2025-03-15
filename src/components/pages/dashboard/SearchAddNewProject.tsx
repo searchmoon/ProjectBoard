@@ -9,29 +9,26 @@ import { Plus } from 'lucide-react';
 import { DefaultDialog } from '@/components/common/DefaultDialog';
 import useDialog from '../../../hooks/useDialog';
 import ModalProjectUpdate from '@/components/common/modalContent/ModalProjectUpdate';
+import { useProjectStore } from '../../../store/useProjectStore';
 
-interface SearchAddNewProjectProp {
-  setProjects: Dispatch<SetStateAction<ProjectType[] | null>>;
-}
-
-const SearchAddNewProject = ({ setProjects }: SearchAddNewProjectProp) => {
+const SearchAddNewProject = () => {
   const [search, setSearch] = useState('');
   const debounceValue = useDebounce(search);
-
+  const { setProjects, originalProjects } = useProjectStore();
   const handleSearchProject = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
   };
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      const { data } = await supabase
-        .from('project')
-        .select('*')
-        .like('title', `%${debounceValue}%`);
-      setProjects(data);
-    };
-
-    fetchProjects();
+    if (debounceValue) {
+      setProjects(
+        originalProjects.filter((item) =>
+          item.title.toLowerCase().includes(debounceValue.toLowerCase()),
+        ),
+      );
+    } else if (!debounceValue) {
+      setProjects(originalProjects);
+    }
   }, [debounceValue]);
 
   const { isOpen, handleToggleDialog } = useDialog();
