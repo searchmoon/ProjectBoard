@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { ProjectType, Status } from '@/pages/Dashboard';
+import { formatStatusType } from '@/utils/format';
 
 interface ModalProjectUpdateProps {
   action?: 'update' | 'create' | 'detail';
@@ -113,13 +114,9 @@ export default function ModalProjectUpdate({
         <Select value={projectData.status} onValueChange={handleStatusChange}>
           <SelectTrigger className="w-[280px]">
             <SelectValue placeholder="상태 선택">
-              {projectData.status == 'not-in-progress'
-                ? '시작전'
-                : projectData.status == 'in-progress'
-                  ? '진행중'
-                  : projectData.status === 'completed'
-                    ? '완료'
-                    : '상태 선택'}
+              {projectData.status
+                ? formatStatusType(projectData.status)
+                : '상태 선택'}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>

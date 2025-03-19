@@ -1,5 +1,6 @@
 import { Label } from '@/components/ui/label';
 import { ProjectType } from '@/pages/Dashboard';
+import { formatStatusType } from '@/utils/format';
 
 export default function ModalProjectDetail({
   selectedProject,
@@ -28,7 +29,9 @@ export default function ModalProjectDetail({
         <Label htmlFor="status" className="text-right">
           상태
         </Label>
-        <p className="col-span-3">{selectedProject?.status}</p>
+        <p className="col-span-3">
+          {formatStatusType(selectedProject?.status)}
+        </p>
       </div>
       <div className={modalGridStyle}>
         <Label htmlFor="description" className="text-right">
